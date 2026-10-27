@@ -1,13 +1,13 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 export interface IContest extends Document {
   title: string;
   description: string;
   startTime: Date;
   endTime: Date;
-  problems: Schema.Types.ObjectId[];
-  participants: Schema.Types.ObjectId[];
-  createdBy: Schema.Types.ObjectId;
+  problems: Types.ObjectId[];
+  participants: Types.ObjectId[];
+  createdBy: Types.ObjectId;
   status: "upcoming" | "live" | "ended";
   createdAt: Date;
 }

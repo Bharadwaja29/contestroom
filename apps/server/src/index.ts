@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth.routes";
+import contestRoutes from "./routes/contest.routes";
+import problemRoutes from "./routes/problem.routes";
 
 dotenv.config();
 
@@ -15,6 +17,11 @@ app.use("/api/auth", authRoutes);
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.use("/api/auth", authRoutes);
+app.use("/api/contests", contestRoutes);
+
+app.use("/api/problems", problemRoutes);
 
 
 // --- GLOBAL ERROR HANDLER ---

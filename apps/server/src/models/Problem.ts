@@ -1,4 +1,4 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 
 export interface ITestCase {
   input: string;
@@ -14,7 +14,7 @@ export interface IProblem extends Document {
   testCases: ITestCase[];
   timeLimitMs: number;
   memoryLimitMb: number;
-  createdBy: Schema.Types.ObjectId;
+  createdBy: Types.ObjectId;
   createdAt: Date;
 }
 
