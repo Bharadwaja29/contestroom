@@ -15,7 +15,7 @@ export const protect = asyncHandler(async (req: AuthRequest, res: Response, next
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string) as { id: string };
     req.userId = decoded.id;
     next();
   } catch (error) {

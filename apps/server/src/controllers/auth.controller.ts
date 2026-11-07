@@ -12,14 +12,15 @@ const generateAccessAndRefreshTokens = async (userId: string) => {
     const user = await User.findById(userId);
     if (!user) throw new ApiError(404, "User not found");
 
-    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "15m" });
-    const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: "7d" });
+    const accessToken = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN as string, { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_TOKEN as string, { expiresIn: "7d" });
 
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.log("REAL ERROR:", error);
     throw new ApiError(500, "Something went wrong while generating tokens");
   }
 };
