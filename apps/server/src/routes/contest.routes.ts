@@ -6,6 +6,7 @@ import {
   addProblemToContest 
 } from "../controllers/contest.controller";
 import { protect } from "../middleware/auth";
+import { joinContest } from "../controllers/contest.controller";
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.post("/", protect, createContest);
 
 router.get("/:id", protect, getContestById);
 router.post("/:id/problems", protect, addProblemToContest);
+router.post("/:id/join", protect, joinContest);
 
 export default router;
