@@ -6,7 +6,7 @@ import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
 import { AuthRequest } from "../middleware/auth";
-
+import { registerParticipant } from "../services/leaderboard.service";
 
 export const createContest = asyncHandler(async (req: AuthRequest, res: Response) => {
   const { title, description, startTime, endTime } = req.body;
@@ -89,4 +89,21 @@ export const getContestById = asyncHandler(async (req: AuthRequest, res: Respons
     : [];
 
   return res.status(200).json(new ApiResponse(200, { ...data, problems }, "Contest fetched"));
+});
+
+export const joinContest = asyncHandler(async (req: AuthRequest, res: Response) => {
+  const id = req.params.id as string;
+  
+  if (!isValidObjectId(id)) throw new ApiError(400, "Invalid contest id");
+
+  const contest = await Contest.findById(id);
+  if (!contest) throw new ApiError(404, "Contest not found");
+  if (new Date() >= contest.endTime) throw new ApiError(400, "Contest has ended");
+
+  const userId = req.userId;
+
+  await Contest.updateOne({ _id: id }, { $addToSet: { participants: userId } });
+  await registerParticipant(id, userId as string);
+
+  return res.status(200).json(new ApiResponse(200, null, "Joined contest"));
 });

@@ -5,6 +5,8 @@ import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import contestRoutes from "./routes/contest.routes";
 import problemRoutes from "./routes/problem.routes";
+import http from "http";
+import { initSocket } from "./sockets";
 
 dotenv.config();
 
@@ -38,6 +40,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 const PORT = process.env.PORT || 5001;
 
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+
 connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  httpServer.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
