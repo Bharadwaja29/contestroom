@@ -42,7 +42,7 @@ export const createSubmission = asyncHandler(async (req: AuthRequest, res: Respo
   if (!allowed) throw new ApiError(429, "Wait a few seconds before submitting again");
 
   const submission = await Submission.create({
-    userId: userId as any,
+    userId,
     contestId,
     problemId,
     code,

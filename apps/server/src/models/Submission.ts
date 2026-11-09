@@ -1,9 +1,9 @@
 import { Schema, model, Document, Types } from "mongoose";
 
 export interface ISubmission extends Document {
-  userId: Schema.Types.ObjectId;
-  contestId: Schema.Types.ObjectId;
-  problemId: Schema.Types.ObjectId;
+  userId: Types.ObjectId;
+  contestId: Types.ObjectId;
+  problemId: Types.ObjectId;
   code: string;
   language: string;
   status: "pending" | "accepted" | "wrong_answer" | "runtime_error" | "tle";
