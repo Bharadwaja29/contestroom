@@ -28,7 +28,7 @@ export const createSubmission = asyncHandler(async (req: AuthRequest, res: Respo
   if (now >= contest.endTime) throw new ApiError(400, "Contest has ended");
 
   
-  const userId = (req as any).userId || (req as any).user?.id;
+  const userId = req.userId as string;
 
   if (!contest.participants.some((p) => p.toString() === userId)) {
     throw new ApiError(403, "Join the contest first");
@@ -37,12 +37,12 @@ export const createSubmission = asyncHandler(async (req: AuthRequest, res: Respo
     throw new ApiError(400, "Problem is not part of this contest");
   }
 
-  // Basic rate limit: one submission per user per problem every 5 seconds
+  
   const allowed = await redis.set(`ratelimit:submit:${userId}:${problemId}`, "1", "EX", 5, "NX");
   if (!allowed) throw new ApiError(429, "Wait a few seconds before submitting again");
 
   const submission = await Submission.create({
-    userId,
+    userId: userId as any,
     contestId,
     problemId,
     code,
@@ -61,7 +61,7 @@ export const getSubmission = asyncHandler(async (req: AuthRequest, res: Response
   const submission = await Submission.findById(id);
   if (!submission) throw new ApiError(404, "Submission not found");
   
-  const userId = (req as any).userId || (req as any).user?.id;
+  const userId = req.userId as string;
   if (submission.userId.toString() !== userId) throw new ApiError(403, "Not your submission");
 
   return res.status(200).json(new ApiResponse(200, submission, "Submission fetched"));
