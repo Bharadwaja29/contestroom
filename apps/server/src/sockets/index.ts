@@ -5,6 +5,7 @@ import { isValidObjectId } from "mongoose";
 import { Contest } from "../models/Contest";
 import { User } from "../models/User";
 import { getTop } from "../services/leaderboard.service";
+import { redis } from "../config/redis";
 
 let io: Server;
 const timers = new Map<string, NodeJS.Timeout[]>();
@@ -61,6 +62,18 @@ export const initSocket = (httpServer: HttpServer) => {
     cors: { origin: process.env.CLIENT_URL || "http://localhost:5173" },
   });
 
+  const sub = redis.duplicate(); 
+  sub.subscribe("leaderboard:updated", "submission:result");
+
+  sub.on("message", (channel, message) => {
+    if (channel === "leaderboard:updated") {
+      broadcastLeaderboard(message).catch(console.error);
+    } else if (channel === "submission:result") {
+      const { userId, ...result } = JSON.parse(message);
+      io.to(`user:${userId}`).emit("submission:result", result);
+    }
+  });
+
   io.use((socket, next) => {
     try {
       const token = socket.handshake.auth?.token;
@@ -75,6 +88,7 @@ export const initSocket = (httpServer: HttpServer) => {
   });
 
   io.on("connection", (socket) => {
+    socket.join(`user:${socket.data.userId}`);
     socket.on("contest:join", async (payload, ack) => {
       const reply = typeof ack === "function" ? ack : () => {};
       try {

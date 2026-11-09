@@ -1,5 +1,5 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth.routes";
@@ -7,8 +7,7 @@ import contestRoutes from "./routes/contest.routes";
 import problemRoutes from "./routes/problem.routes";
 import http from "http";
 import { initSocket } from "./sockets";
-
-dotenv.config();
+import submissionRoutes from "./routes/submission.routes";
 
 const app = express();
 app.use(express.json());
@@ -24,6 +23,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/contests", contestRoutes);
 
 app.use("/api/problems", problemRoutes);
+
+app.use("/api/submissions", submissionRoutes);
 
 
 // --- GLOBAL ERROR HANDLER ---
